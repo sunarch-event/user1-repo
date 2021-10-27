@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    initialization-mode: always
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgres://ezziaauhlcivoi:1c53f6a5c1e964076f50127c49ffa72ab3c42eaa43e3486b5ba84ca546627302@ec2-34-203-91-150.compute-1.amazonaws.com:5432/dbabplbifru62j
+    username: ezziaauhlcivoi
+    password: 1c53f6a5c1e964076f50127c49ffa72ab3c42eaa43e3486b5ba84ca546627302
+
+server:
+  port: 8080
+
+app:
+  execute:
+    user: 佐々木渉
+  google:
+    oauth2-url: https://www.googleapis.com/oauth2/v4/token
+    api-url: https://sheets.googleapis.com/v4/spreadsheets/
+    sheet-id: 13RqLVAYKnbff6f5cWPzqyh-1y5j8NC_brqI_Le73qhI
+    client-id: 455165694555-gekiq4j8upinbq5kejusq7t92r7t560v.apps.googleusercontent.com
+    client-secret: 6r7S3FqjssNuXM8FbKa-GLX0
+    refresh-token: 1//0eUMWJyOCHBimCgYIARAAGA4SNwF-L9IrbwgtJYYyS1qfAi-0l2d_LjZaK1Cth6FbicCFBEeoJjc8rVdHHM5sye1xQDDuv7KHDic
