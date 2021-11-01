@@ -76,6 +76,8 @@ public class PerformanceService {
         /** 変更不可 **/
         truncateTable();
         /** 変更不可 **/
+
+        dropIndex();
         
         // CSVを取得・CSVファイルをDBに登録する
         //ファイル読み込みで使用する3つのクラス
@@ -169,9 +171,11 @@ public class PerformanceService {
             log.info("csv read error", e);
         }
         // 対象情報取得
+        createIndex();
         UserMaster targetUserMaster = userDao.getTargetUserMaster();
 
         // DBから検索する
+        dropIndex();
         List<UserMaster> userMasterList = userDao.searchUserMaster(targetUserMaster.getId());
 
         List<UserMaster> bloodMatchingUserList = new ArrayList<UserMaster>();
@@ -229,6 +233,14 @@ public class PerformanceService {
     public void truncateTable() {
         userDao.truncateUserInfo();
         userDao.truncateUserHobby();
+    }
+
+    public void dropIndex() {
+        userDao.dropIndex();
+    }
+
+    public void createIndex() {
+        userDao.createIndex();
     }
 
     public Long referenceExecuteTime(String uuid) {

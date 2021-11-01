@@ -198,5 +198,15 @@ public class UserDao {
         RowMapper<UserMaster> mapper = new BeanPropertyRowMapper<UserMaster>(UserMaster.class);
         return jdbcTemplate.query(sb.toString(), mapper, id);
     }
+
+    public void dropIndex() {
+        String sql = "DROP INDEX IF EXISTS idx_user_info_1";
+        jdbcTemplate.execute(sql);
+    }
+
+    public void createIndex() {
+        String sql = "CREATE INDEX IF NOT EXISTS idx_user_info_1 ON user_info(last_name, first_name)";
+        jdbcTemplate.execute(sql);
+   }
     
 }
