@@ -2,7 +2,9 @@ package com.performance.domain.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,15 +79,17 @@ public class PerformanceService {
         
         // CSVを取得・CSVファイルをDBに登録する
         //ファイル読み込みで使用する3つのクラス
-        FileReader fr = null;
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
         BufferedReader br = null;
         List<String> csvFile = new ArrayList<String>();
         try {
 
             //読み込みファイルのインスタンス生成
             //ファイル名を指定する
-            fr = new FileReader(new File("data/userInfo.csv"));
-            br = new BufferedReader(fr);
+            fis = new FileInputStream(new File("data/userInfo.csv"));
+            isr = new InputStreamReader(fis);
+            br = new BufferedReader(isr);
             
 
             //読み込み行
@@ -110,6 +114,8 @@ public class PerformanceService {
         } finally {
             try {
                 br.close();
+                isr.close();
+                fis.close();
             } catch (Exception e) {
             }
         }
