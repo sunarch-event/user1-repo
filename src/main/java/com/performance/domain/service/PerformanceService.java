@@ -122,6 +122,7 @@ public class PerformanceService {
 
         try {
             int i = 0;
+            List<UserMaster> insertUserMasterList = new ArrayList<UserMaster>();
             for(String line : csvFile) {
                 //カンマで分割した内容を配列に格納する
                 String[] data = line.split(",", -1);
@@ -140,19 +141,18 @@ public class PerformanceService {
                 log.debug("趣味3:" + data[7]);
                 log.debug("趣味4:" + data[8]);
                 log.debug("趣味5:" + data[9]);
-                UserInfo userInfo = new UserInfo();
-                UserHobby userHobby = new UserHobby();
+                UserMaster userMaster = new UserMaster();
 
-                userInfo.setLastName(data[0]);
-                userInfo.setFirstName(data[1]);
-                userInfo.setPrefectures(data[2]);
-                userInfo.setCity(data[3]);
-                userInfo.setBloodType(data[4]);
-                userHobby.setHobby1(data[5]);
-                userHobby.setHobby2(data[6]);
-                userHobby.setHobby3(data[7]);
-                userHobby.setHobby4(data[8]);
-                userHobby.setHobby5(data[9]);
+                userMaster.setLastName(data[0]);
+                userMaster.setFirstName(data[1]);
+                userMaster.setPrefectures(data[2]);
+                userMaster.setCity(data[3]);
+                userMaster.setBloodType(data[4]);
+                userMaster.setHobby1(data[5]);
+                userMaster.setHobby2(data[6]);
+                userMaster.setHobby3(data[7]);
+                userMaster.setHobby4(data[8]);
+                userMaster.setHobby5(data[9]);
                 // 特定の件のみインサートするようにする
                 Pattern pattern = Pattern.compile(".新潟県,上越市.");
                 Matcher matcher = pattern.matcher(line);
@@ -160,12 +160,10 @@ public class PerformanceService {
                     // 行数のインクリメント
                     i++;
                     log.info("データ書き込み" + i + "件目");
-                    userDao.insertUserInfo(userInfo);
-                    Long id = userDao.selectId(userInfo);
-                    userHobby.setId(id);
-                    userDao.insertUserHobby(userHobby);
+                    insertUserMasterList.add(userMaster);
                 }
             }
+            userDao.insertUserInfoAndUserHobby(insertUserMasterList);
 
         } catch (Exception e) {
             log.info("csv read error", e);
