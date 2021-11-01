@@ -19,8 +19,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.performance.domain.dao.UserDao;
-import com.performance.domain.entity.UserHobby;
-import com.performance.domain.entity.UserInfo;
 import com.performance.domain.entity.UserMaster;
 
 @Service
