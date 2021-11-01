@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,52 +179,28 @@ public class PerformanceService {
         dropIndex();
         List<UserMaster> userMasterList = userDao.searchUserMaster(targetUserMaster.getId());
 
-        List<UserMaster> bloodMatchingUserList = new ArrayList<UserMaster>();
-        // 同じ血液型ユーザー
-        for(UserMaster user : userMasterList) {
-            if(user.getBloodType().equals(targetUserMaster.getBloodType())) {
-                bloodMatchingUserList.add(user);
-            }
-        }
         List<UserMaster> matchingUserList = new ArrayList<UserMaster>();
-        // 趣味1に同じ趣味を持っているユーザー
-        for(UserMaster user : bloodMatchingUserList) {
-            if(user.getHobby1().equals(targetUserMaster.getHobby1()) || user.getHobby1().equals(targetUserMaster.getHobby2()) || user.getHobby1().equals(targetUserMaster.getHobby3()) || user.getHobby1().equals(targetUserMaster.getHobby4()) || user.getHobby1().equals(targetUserMaster.getHobby5())) {
-                if(!matchingUserList.contains(user)) {
-                    matchingUserList.add(user);
-                }
-            }
-        }
-        // 趣味2に同じ趣味を持っているユーザー
-        for(UserMaster user : bloodMatchingUserList) {
-            if(user.getHobby2().equals(targetUserMaster.getHobby1()) || user.getHobby2().equals(targetUserMaster.getHobby2()) || user.getHobby2().equals(targetUserMaster.getHobby3()) || user.getHobby2().equals(targetUserMaster.getHobby4()) || user.getHobby2().equals(targetUserMaster.getHobby5())) {
-                if(!matchingUserList.contains(user)) {
-                    matchingUserList.add(user);
-                }
-            }
-        }
-        // 趣味3に同じ趣味を持っているユーザー
-        for(UserMaster user : bloodMatchingUserList) {
-            if(user.getHobby3().equals(targetUserMaster.getHobby1()) || user.getHobby3().equals(targetUserMaster.getHobby2()) || user.getHobby3().equals(targetUserMaster.getHobby3()) || user.getHobby3().equals(targetUserMaster.getHobby4()) || user.getHobby3().equals(targetUserMaster.getHobby5())) {
-                if(!matchingUserList.contains(user)) {
-                    matchingUserList.add(user);
-                }
-            }
-        }
-        // 趣味4に同じ趣味を持っているユーザー
-        for(UserMaster user : bloodMatchingUserList) {
-            if(user.getHobby4().equals(targetUserMaster.getHobby1()) || user.getHobby4().equals(targetUserMaster.getHobby2()) || user.getHobby4().equals(targetUserMaster.getHobby3()) || user.getHobby4().equals(targetUserMaster.getHobby4()) || user.getHobby4().equals(targetUserMaster.getHobby5())) {
-                if(!matchingUserList.contains(user)) {
-                    matchingUserList.add(user);
-                }
-            }
-        }
-        // 趣味5に同じ趣味を持っているユーザー
-        for(UserMaster user : bloodMatchingUserList) {
-            if(user.getHobby5().equals(targetUserMaster.getHobby1()) || user.getHobby5().equals(targetUserMaster.getHobby2()) || user.getHobby5().equals(targetUserMaster.getHobby3()) || user.getHobby5().equals(targetUserMaster.getHobby4()) || user.getHobby5().equals(targetUserMaster.getHobby5())) {
-                if(!matchingUserList.contains(user)) {
-                    matchingUserList.add(user);
-                }
+        List<String> targetHobbys = Arrays.asList(
+                targetUserMaster.getHobby1(),
+                targetUserMaster.getHobby2(),
+                targetUserMaster.getHobby3(),
+                targetUserMaster.getHobby4(),
+                targetUserMaster.getHobby5());
+        List<String> userHobbys = new ArrayList<String>();
+
+        for (UserMaster user : userMasterList) {
+            userHobbys.clear();
+            userHobbys.addAll(Arrays.asList(
+                    user.getHobby1(),
+                    user.getHobby2(),
+                    user.getHobby3(),
+                    user.getHobby4(),
+                    user.getHobby5()));
+            userHobbys.retainAll(targetHobbys);
+            // 同じ血液型かつ同じ趣味を持っているユーザー
+            if (user.getBloodType().equals(targetUserMaster.getBloodType()) 
+                    && userHobbys.size() > 0) {
+                matchingUserList.add(user);
             }
         }
         return matchingUserList;
