@@ -169,49 +169,11 @@ public class PerformanceService {
             log.info("csv read error", e);
         }
         // 対象情報取得
-        UserInfo targetUserInfo = userDao.getTargetUserInfo();
-        UserHobby targetUserHobby = userDao.getTargetUserHobby(targetUserInfo);
-        UserMaster targetUserMaster = new UserMaster();
-        
-        targetUserMaster.setId(targetUserInfo.getId());
-        targetUserMaster.setLastName(targetUserInfo.getLastName());
-        targetUserMaster.setFirstName(targetUserInfo.getFirstName());
-        targetUserMaster.setPrefectures(targetUserInfo.getPrefectures());
-        targetUserMaster.setCity(targetUserInfo.getCity());
-        targetUserMaster.setBloodType(targetUserInfo.getBloodType());
-        targetUserMaster.setHobby1(targetUserHobby.getHobby1());
-        targetUserMaster.setHobby2(targetUserHobby.getHobby2());
-        targetUserMaster.setHobby3(targetUserHobby.getHobby3());
-        targetUserMaster.setHobby4(targetUserHobby.getHobby4());
-        targetUserMaster.setHobby5(targetUserHobby.getHobby5());
-        
+        UserMaster targetUserMaster = userDao.getTargetUserMaster();
+
         // DBから検索する
-        List<UserInfo> userInfoList = userDao.searchUserInfo();
-        List<UserHobby> userHobbyList = userDao.searchUserHobby(targetUserHobby);
-        
-        List<UserMaster> userMasterList = new ArrayList<UserMaster>();
-        
-        for(int i = 0; i < userInfoList.size(); i++) {
-            UserMaster userMaster = new UserMaster();
-            userMaster.setId(userInfoList.get(i).getId());
-            userMaster.setLastName(userInfoList.get(i).getLastName());
-            userMaster.setFirstName(userInfoList.get(i).getFirstName());
-            userMaster.setPrefectures(userInfoList.get(i).getPrefectures());
-            userMaster.setCity(userInfoList.get(i).getCity());
-            userMaster.setBloodType(userInfoList.get(i).getBloodType());
-            for(int j = 0; j < userHobbyList.size(); j++) {
-                if(userMaster.getId().equals(userHobbyList.get(j).getId())) {
-                    userMaster.setHobby1(userHobbyList.get(j).getHobby1());
-                    userMaster.setHobby2(userHobbyList.get(j).getHobby2());
-                    userMaster.setHobby3(userHobbyList.get(j).getHobby3());
-                    userMaster.setHobby4(userHobbyList.get(j).getHobby4());
-                    userMaster.setHobby5(userHobbyList.get(j).getHobby5());
-                    break;
-                }
-            }
-            userMasterList.add(userMaster);
-        }
-        
+        List<UserMaster> userMasterList = userDao.searchUserMaster(targetUserMaster.getId());
+
         List<UserMaster> bloodMatchingUserList = new ArrayList<UserMaster>();
         // 同じ血液型ユーザー
         for(UserMaster user : userMasterList) {

@@ -111,35 +111,35 @@ public class UserDao {
 
     @Transactional
 	public void insertUserInfoAndUserHobby(List<UserMaster> insertUserMasterList) {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append("WITH info AS ( ");
-    	sb.append("  INSERT ");
-    	sb.append("  INTO user_info( ");
-    	sb.append("    last_name");
-    	sb.append("    , first_name");
-    	sb.append("    , prefectures");
-    	sb.append("    , city");
-    	sb.append("    , blood_type");
-    	sb.append("  ) ");
-    	sb.append("  VALUES (? , ? , ? , ? , ? ) RETURNING id");
-    	sb.append(") ");
-    	sb.append("INSERT ");
-    	sb.append("INTO user_hobby(id, hobby1, hobby2, hobby3, hobby4, hobby5) ");
-    	sb.append("VALUES ((SELECT id FROM info), ? , ? , ? , ? , ? )");
+        StringBuilder sb = new StringBuilder();
+        sb.append("WITH info AS ( ");
+        sb.append("  INSERT ");
+        sb.append("  INTO user_info( ");
+        sb.append("    last_name");
+        sb.append("    , first_name");
+        sb.append("    , prefectures");
+        sb.append("    , city");
+        sb.append("    , blood_type");
+        sb.append("  ) ");
+        sb.append("  VALUES (? , ? , ? , ? , ? ) RETURNING id");
+        sb.append(") ");
+        sb.append("INSERT ");
+        sb.append("INTO user_hobby(id, hobby1, hobby2, hobby3, hobby4, hobby5) ");
+        sb.append("VALUES ((SELECT id FROM info), ? , ? , ? , ? , ? )");
         jdbcTemplate.batchUpdate(sb.toString(), new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-            	UserMaster userMaster = insertUserMasterList.get(i);
-            	ps.setString(1, userMaster.getLastName());
-            	ps.setString(2, userMaster.getFirstName());
-            	ps.setString(3, userMaster.getPrefectures());
-            	ps.setString(4, userMaster.getCity());
-            	ps.setString(5, userMaster.getBloodType());
-            	ps.setString(6, userMaster.getHobby1());
-            	ps.setString(7, userMaster.getHobby2());
-            	ps.setString(8, userMaster.getHobby3());
-            	ps.setString(9, userMaster.getHobby4());
-            	ps.setString(10, userMaster.getHobby5());
+                UserMaster userMaster = insertUserMasterList.get(i);
+                ps.setString(1, userMaster.getLastName());
+                ps.setString(2, userMaster.getFirstName());
+                ps.setString(3, userMaster.getPrefectures());
+                ps.setString(4, userMaster.getCity());
+                ps.setString(5, userMaster.getBloodType());
+                ps.setString(6, userMaster.getHobby1());
+                ps.setString(7, userMaster.getHobby2());
+                ps.setString(8, userMaster.getHobby3());
+                ps.setString(9, userMaster.getHobby4());
+                ps.setString(10, userMaster.getHobby5());
             }
             @Override
             public int getBatchSize() {
@@ -147,5 +147,56 @@ public class UserDao {
             }
           });
 	}
+
+    public UserMaster getTargetUserMaster() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT");
+        sb.append("  i.id");
+        sb.append("  , i.last_name");
+        sb.append("  , i.first_name");
+        sb.append("  , i.prefectures");
+        sb.append("  , i.city");
+        sb.append("  , i.blood_type");
+        sb.append("  , h.hobby1");
+        sb.append("  , h.hobby2");
+        sb.append("  , h.hobby3");
+        sb.append("  , h.hobby4");
+        sb.append("  , h.hobby5 ");
+        sb.append("FROM");
+        sb.append("  user_info i ");
+        sb.append("  INNER JOIN user_hobby h ");
+        sb.append("    ON i.id = h.id ");
+        sb.append("WHERE");
+        sb.append("  i.last_name = '試験' ");
+        sb.append("  AND i.first_name = '太郎'");
+        RowMapper<UserMaster> mapper = new BeanPropertyRowMapper<UserMaster>(UserMaster.class);
+        return jdbcTemplate.queryForObject(sb.toString(), mapper);
+    }
+
+    public List<UserMaster> searchUserMaster(Long id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT");
+        sb.append("  i.id");
+        sb.append("  , i.last_name");
+        sb.append("  , i.first_name");
+        sb.append("  , i.prefectures");
+        sb.append("  , i.city");
+        sb.append("  , i.blood_type");
+        sb.append("  , h.hobby1");
+        sb.append("  , h.hobby2");
+        sb.append("  , h.hobby3");
+        sb.append("  , h.hobby4");
+        sb.append("  , h.hobby5 ");
+        sb.append("FROM");
+        sb.append("  user_info i ");
+        sb.append("  INNER JOIN user_hobby h ");
+        sb.append("    ON i.id = h.id ");
+        sb.append("WHERE");
+        sb.append("  i.id <> ? ");
+        sb.append("ORDER BY");
+        sb.append("  i.id ");
+        RowMapper<UserMaster> mapper = new BeanPropertyRowMapper<UserMaster>(UserMaster.class);
+        return jdbcTemplate.query(sb.toString(), mapper, id);
+    }
     
 }
