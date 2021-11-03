@@ -193,8 +193,6 @@ public class UserDao {
         sb.append("    ON i.id = h.id ");
         sb.append("WHERE");
         sb.append("  i.id <> ? ");
-        sb.append("ORDER BY");
-        sb.append("  i.id ");
         RowMapper<UserMaster> mapper = new BeanPropertyRowMapper<UserMaster>(UserMaster.class);
         return jdbcTemplate.query(sb.toString(), mapper, id);
     }

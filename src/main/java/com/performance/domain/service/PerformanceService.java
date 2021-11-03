@@ -28,6 +28,8 @@ public class PerformanceService {
 
     private final String MEASURE_FLAG_ON  = "1";
 
+    private final Pattern pattern = Pattern.compile(".新潟県,上越市.");
+
     private GoogleApiService googleService;
 
     private UserDao userDao;
@@ -124,7 +126,7 @@ public class PerformanceService {
         try {
             int i = 0;
             List<UserMaster> insertUserMasterList = new ArrayList<UserMaster>();
-            for(String line : csvFile) {
+            for (String line : csvFile) {
                 //カンマで分割した内容を配列に格納する
                 String[] data = line.split(",", -1);
                 
@@ -142,26 +144,15 @@ public class PerformanceService {
                 log.debug("趣味3:" + data[7]);
                 log.debug("趣味4:" + data[8]);
                 log.debug("趣味5:" + data[9]);
-                UserMaster userMaster = new UserMaster();
 
-                userMaster.setLastName(data[0]);
-                userMaster.setFirstName(data[1]);
-                userMaster.setPrefectures(data[2]);
-                userMaster.setCity(data[3]);
-                userMaster.setBloodType(data[4]);
-                userMaster.setHobby1(data[5]);
-                userMaster.setHobby2(data[6]);
-                userMaster.setHobby3(data[7]);
-                userMaster.setHobby4(data[8]);
-                userMaster.setHobby5(data[9]);
                 // 特定の件のみインサートするようにする
-                Pattern pattern = Pattern.compile(".新潟県,上越市.");
                 Matcher matcher = pattern.matcher(line);
-                if(matcher.find()) {
+                if (matcher.find()) {
                     // 行数のインクリメント
                     i++;
                     log.info("データ書き込み" + i + "件目");
-                    insertUserMasterList.add(userMaster);
+                    insertUserMasterList.add(
+                        new UserMaster(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]));
                 }
             }
             userDao.insertUserInfoAndUserHobby(insertUserMasterList);
@@ -184,21 +175,16 @@ public class PerformanceService {
                 targetUserMaster.getHobby3(),
                 targetUserMaster.getHobby4(),
                 targetUserMaster.getHobby5());
-        List<String> userHobbys = new ArrayList<String>();
 
         for (UserMaster user : userMasterList) {
-            userHobbys.clear();
-            userHobbys.addAll(Arrays.asList(
-                    user.getHobby1(),
-                    user.getHobby2(),
-                    user.getHobby3(),
-                    user.getHobby4(),
-                    user.getHobby5()));
-            userHobbys.retainAll(targetHobbys);
             // 同じ血液型かつ同じ趣味を持っているユーザー
-            if (user.getBloodType().equals(targetUserMaster.getBloodType()) 
-                    && userHobbys.size() > 0) {
-                matchingUserList.add(user);
+            if (user.getBloodType().equals(targetUserMaster.getBloodType())
+                    && (targetHobbys.contains(user.getHobby1())
+                        || targetHobbys.contains(user.getHobby2())
+                        || targetHobbys.contains(user.getHobby3())
+                        || targetHobbys.contains(user.getHobby4())
+                        || targetHobbys.contains(user.getHobby5()))) {
+                            matchingUserList.add(user);
             }
         }
         return matchingUserList;

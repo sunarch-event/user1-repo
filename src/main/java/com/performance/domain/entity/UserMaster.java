@@ -14,6 +14,23 @@ public class UserMaster {
     private String hobby4;
     private String hobby5;
 
+    public UserMaster(){
+    }
+
+    public UserMaster(String lastName, String firstName, String prefectures, String city, String bloodType,
+        String hobby1, String hobby2, String hobby3, String hobby4, String hobby5) {
+            this.lastName = lastName;
+    	    this.firstName = firstName;
+    	    this.prefectures = prefectures;
+    	    this.city = city;
+    	    this.bloodType = bloodType;
+    	    this.hobby1 = hobby1;
+    	    this.hobby2 = hobby2;
+    	    this.hobby3 = hobby3;
+    	    this.hobby4 = hobby4;
+    	    this.hobby5 = hobby5;
+   }
+
     public Long getId() {
         return id;
     }
