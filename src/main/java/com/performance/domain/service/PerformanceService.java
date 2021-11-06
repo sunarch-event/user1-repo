@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -144,7 +145,8 @@ public class PerformanceService {
                 log.debug("趣味5:" + data[9]);
 
                 // 特定の件のみインサートするようにする
-                if (pattern.matcher(line).find()) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
                     // 行数のインクリメント
                     i++;
                     log.info("データ書き込み" + i + "件目");
