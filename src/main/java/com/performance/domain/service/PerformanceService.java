@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,28 +165,7 @@ public class PerformanceService {
 
         // DBから検索する
         dropIndex();
-        List<UserMaster> userMasterList = userDao.searchUserMaster(targetUserMaster.getId());
-
-        List<UserMaster> matchingUserList = new ArrayList<UserMaster>();
-        List<String> targetHobbys = Arrays.asList(
-                targetUserMaster.getHobby1(),
-                targetUserMaster.getHobby2(),
-                targetUserMaster.getHobby3(),
-                targetUserMaster.getHobby4(),
-                targetUserMaster.getHobby5());
-
-        for (UserMaster user : userMasterList) {
-            // 同じ血液型かつ同じ趣味を持っているユーザー
-            if (user.getBloodType().equals(targetUserMaster.getBloodType())
-                    && (targetHobbys.contains(user.getHobby1())
-                        || targetHobbys.contains(user.getHobby2())
-                        || targetHobbys.contains(user.getHobby3())
-                        || targetHobbys.contains(user.getHobby4())
-                        || targetHobbys.contains(user.getHobby5()))) {
-                            matchingUserList.add(user);
-            }
-        }
-        return matchingUserList;
+        return userDao.searchUserMaster(targetUserMaster);
     }
 
     

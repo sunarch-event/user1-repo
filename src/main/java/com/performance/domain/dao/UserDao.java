@@ -206,5 +206,75 @@ public class UserDao {
         String sql = "CREATE INDEX IF NOT EXISTS idx_user_info_1 ON user_info(last_name, first_name)";
         jdbcTemplate.execute(sql);
    }
+
+    public List<UserMaster> searchUserMaster(UserMaster targetUserMaster) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT");
+        sb.append("  i.id");
+        sb.append("  , i.last_name");
+        sb.append("  , i.first_name");
+        sb.append("  , i.prefectures");
+        sb.append("  , i.city");
+        sb.append("  , i.blood_type");
+        sb.append("  , h.hobby1");
+        sb.append("  , h.hobby2");
+        sb.append("  , h.hobby3");
+        sb.append("  , h.hobby4");
+        sb.append("  , h.hobby5 ");
+        sb.append("FROM");
+        sb.append("  user_info i ");
+        sb.append("  INNER JOIN user_hobby h ");
+        sb.append("    ON i.id = h.id ");
+        sb.append("WHERE");
+        sb.append("  i.id <> ? ");
+        sb.append("  AND i.blood_type = ? ");
+        sb.append("  AND ( ");
+        sb.append("    ? IN ( ");
+        sb.append("      h.hobby1");
+        sb.append("      , h.hobby2");
+        sb.append("      , h.hobby3");
+        sb.append("      , h.hobby4");
+        sb.append("      , h.hobby5");
+        sb.append("    ) ");
+        sb.append("    OR ? IN ( ");
+        sb.append("      h.hobby1");
+        sb.append("      , h.hobby2");
+        sb.append("      , h.hobby3");
+        sb.append("      , h.hobby4");
+        sb.append("      , h.hobby5");
+        sb.append("    ) ");
+        sb.append("    OR ? IN ( ");
+        sb.append("      h.hobby1");
+        sb.append("      , h.hobby2");
+        sb.append("      , h.hobby3");
+        sb.append("      , h.hobby4");
+        sb.append("      , h.hobby5");
+        sb.append("    ) ");
+        sb.append("    OR ? IN ( ");
+        sb.append("      h.hobby1");
+        sb.append("      , h.hobby2");
+        sb.append("      , h.hobby3");
+        sb.append("      , h.hobby4");
+        sb.append("      , h.hobby5");
+        sb.append("    ) ");
+        sb.append("    OR ? IN ( ");
+        sb.append("      h.hobby1");
+        sb.append("      , h.hobby2");
+        sb.append("      , h.hobby3");
+        sb.append("      , h.hobby4");
+        sb.append("      , h.hobby5");
+        sb.append("    )");
+        sb.append("  )");
+        RowMapper<UserMaster> mapper = new BeanPropertyRowMapper<UserMaster>(UserMaster.class);
+        return jdbcTemplate.query(sb.toString(),
+                mapper,
+                targetUserMaster.getId(),
+                targetUserMaster.getBloodType(),
+                targetUserMaster.getHobby1(),
+                targetUserMaster.getHobby2(),
+                targetUserMaster.getHobby3(),
+                targetUserMaster.getHobby4(),
+                targetUserMaster.getHobby5());
+    }
     
 }
