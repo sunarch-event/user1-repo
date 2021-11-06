@@ -145,8 +145,7 @@ public class PerformanceService {
                 log.debug("趣味5:" + data[9]);
 
                 // 特定の件のみインサートするようにする
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
+                if (pattern.matcher(line).find()) {
                     // 行数のインクリメント
                     i++;
                     log.info("データ書き込み" + i + "件目");
