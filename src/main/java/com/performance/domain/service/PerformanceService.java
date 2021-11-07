@@ -40,6 +40,7 @@ public class PerformanceService {
     AtomicInteger i = new AtomicInteger(0);
     AtomicInteger j = new AtomicInteger(0);
     private static final int threadCount = 5;
+    private ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
     private GoogleApiService googleService;
 
@@ -92,8 +93,6 @@ public class PerformanceService {
         dropIndex();
 
         Random rnd = new Random();
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
         try (Stream<String> streamUserMasterList = Files.lines(new File("data/userInfo.csv").toPath(),Charset.forName("UTF-8"))) {
             CompletableFuture<Void> run = CompletableFuture.allOf(streamUserMasterList
             .collect(Collectors.groupingBy(classifier -> rnd.nextInt(threadCount)))
