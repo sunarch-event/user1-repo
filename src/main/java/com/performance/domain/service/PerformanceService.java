@@ -123,7 +123,7 @@ public class PerformanceService {
         }
 
         try {
-            int i = 0;
+            int j = 0;
             List<UserMaster> insertUserMasterList = new ArrayList<UserMaster>();
             for (String line : csvFile) {
                 //カンマで分割した内容を配列に格納する
@@ -148,8 +148,8 @@ public class PerformanceService {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     // 行数のインクリメント
-                    i++;
-                    log.info("データ書き込み" + i + "件目");
+                    j++;
+                    log.info("データ書き込み" + j + "件目");
                     insertUserMasterList.add(
                         new UserMaster(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]));
                 }
