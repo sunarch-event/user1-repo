@@ -21,6 +21,11 @@
     <encoder>
       <pattern>${format1}</pattern>
     </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
   </appender>
  
   <appender name="FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
@@ -35,7 +40,7 @@
     <discardingThreshold>0</discardingThreshold>
   </appender>
 
-  <root level="warn">
+  <root level="debug">
     <appender-ref ref="FILE_ASYNC" />
     <appender-ref ref="STDOUT_ASYNC" />
   </root>
