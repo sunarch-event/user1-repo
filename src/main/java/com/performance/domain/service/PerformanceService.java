@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,7 +103,18 @@ public class PerformanceService {
             run.get();
 
         } catch (Exception e) {
-            log.info("csv read error", e);z
+            log.info("csv read error", e);
+        } finally {
+            if (!executor.isShutdown()) {
+                executor.shutdown();
+                try {
+                    if (!executor.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    log.error("csv read error", e);
+                }
+            }
         }
         // 対象情報取得
         createIndex();
