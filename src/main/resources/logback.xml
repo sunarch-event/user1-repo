@@ -25,13 +25,13 @@
  
   <appender name="FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
     <appender-ref ref="FILE" />
-    <queueSize>5632</queueSize>
+    <queueSize>4096</queueSize>
     <discardingThreshold>0</discardingThreshold>
   </appender>
 
   <appender name="STDOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
     <appender-ref ref="STDOUT" />
-    <queueSize>5632</queueSize>
+    <queueSize>4096</queueSize>
     <discardingThreshold>0</discardingThreshold>
   </appender>
 
