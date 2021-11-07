@@ -35,7 +35,7 @@
     <discardingThreshold>0</discardingThreshold>
   </appender>
 
-  <root level="debug">
+  <root level="warn">
     <appender-ref ref="FILE_ASYNC" />
     <appender-ref ref="STDOUT_ASYNC" />
   </root>

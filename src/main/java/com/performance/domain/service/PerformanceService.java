@@ -40,7 +40,6 @@ public class PerformanceService {
     AtomicInteger i = new AtomicInteger(0);
     AtomicInteger j = new AtomicInteger(0);
     private static final int threadCount = 5;
-    private static final ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
     private GoogleApiService googleService;
 
@@ -93,6 +92,8 @@ public class PerformanceService {
         dropIndex();
 
         Random rnd = new Random();
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
         try (Stream<String> streamUserMasterList = Files.lines(new File("data/userInfo.csv").toPath(),Charset.forName("UTF-8"))) {
             CompletableFuture<Void> run = CompletableFuture.allOf(streamUserMasterList
             .collect(Collectors.groupingBy(classifier -> rnd.nextInt(threadCount)))
@@ -103,7 +104,7 @@ public class PerformanceService {
             run.get();
 
         } catch (Exception e) {
-            log.info("csv read error", e);
+            log.error("csv read error", e);
         } finally {
             if (!executor.isShutdown()) {
                 executor.shutdown();
@@ -192,7 +193,7 @@ public class PerformanceService {
                 csvFile.add(readLine);
             }
         } catch (Exception e) {
-            log.info("csv read error", e);
+            log.error("csv read error", e);
         } finally {
             try {
                 br.close();
