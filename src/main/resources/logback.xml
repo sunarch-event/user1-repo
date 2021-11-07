@@ -21,11 +21,6 @@
     <encoder>
       <pattern>${format1}</pattern>
     </encoder>
-    <filter class="ch.qos.logback.classic.filter.LevelFilter">
-      <level>ERROR</level>
-      <onMatch>ACCEPT</onMatch>
-      <onMismatch>DENY</onMismatch>
-    </filter>
   </appender>
  
   <appender name="FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
