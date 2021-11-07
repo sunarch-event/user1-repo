@@ -2,23 +2,18 @@ package com.performance.domain.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,11 +31,6 @@ public class PerformanceService {
     private final String MEASURE_FLAG_ON  = "1";
 
     private final Pattern pattern = Pattern.compile(".新潟県,上越市.");
-
-    AtomicInteger i = new AtomicInteger(0);
-    AtomicInteger j = new AtomicInteger(0);
-    private static final int threadCount = 5;
-    private ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
     private GoogleApiService googleService;
 
@@ -92,29 +82,84 @@ public class PerformanceService {
 
         dropIndex();
 
-        Random rnd = new Random();
-        try (Stream<String> streamUserMasterList = Files.lines(new File("data/userInfo.csv").toPath(),Charset.forName("UTF-8"))) {
-            CompletableFuture<Void> run = CompletableFuture.allOf(streamUserMasterList
-            .collect(Collectors.groupingBy(classifier -> rnd.nextInt(threadCount)))
-            .values()
-            .stream()
-            .map(mapper -> runBatchInsert(mapper))
-            .toArray(CompletableFuture[]::new));
-            run.get();
+        // CSVを取得・CSVファイルをDBに登録する
+        //ファイル読み込みで使用する3つのクラス
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+        List<String> csvFile = new ArrayList<String>();
+        try {
 
+            //読み込みファイルのインスタンス生成
+            //ファイル名を指定する
+            fis = new FileInputStream(new File("data/userInfo.csv"));
+            isr = new InputStreamReader(fis);
+            br = new BufferedReader(isr);
+
+
+            //読み込み行
+            String readLine;
+
+            //読み込み行数の管理
+            int i = 0;
+
+            //1行ずつ読み込みを行う
+            while ((readLine = br.readLine()) != null) {
+                i++;
+                //データ内容をコンソールに表示する
+                log.info("-------------------------------");
+
+                //データ件数を表示
+                log.info("データ読み込み" + i + "件目");
+
+                csvFile.add(readLine);
+            }
         } catch (Exception e) {
             log.error("csv read error", e);
         } finally {
-            if (!executor.isShutdown()) {
-                executor.shutdown();
-                try {
-                    if (!executor.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
-                        executor.shutdownNow();
-                    }
-                } catch (InterruptedException e) {
-                    log.error("csv read error", e);
+            try {
+                br.close();
+                isr.close();
+                fis.close();
+            } catch (Exception e) {
+            }
+        }
+
+        try {
+            int j = 0;
+            List<UserMaster> insertUserMasterList = new ArrayList<UserMaster>();
+            for (String line : csvFile) {
+                //カンマで分割した内容を配列に格納する
+                String[] data = line.split(",", -1);
+
+                //データ内容をコンソールに表示する
+                log.info("-------------------------------");
+                //データ件数を表示
+                //配列の中身を順位表示する。列数(=列名を格納した配列の要素数)分繰り返す
+                log.debug("ユーザー姓:" + data[1]);
+                log.debug("出身都道府県:" + data[2]);
+                log.debug("ユーザー名:" + data[0]);
+                log.debug("出身市区町村:" + data[3]);
+                log.debug("血液型:" + data[4]);
+                log.debug("趣味1:" + data[5]);
+                log.debug("趣味2:" + data[6]);
+                log.debug("趣味3:" + data[7]);
+                log.debug("趣味4:" + data[8]);
+                log.debug("趣味5:" + data[9]);
+
+                // 特定の件のみインサートするようにする
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    // 行数のインクリメント
+                    j++;
+                    log.info("データ書き込み" + j + "件目");
+                    insertUserMasterList.add(
+                        new UserMaster(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]));
                 }
             }
+            userDao.insertUserInfoAndUserHobby(insertUserMasterList);
+        } catch (Exception e) {
+            log.error("csv read error", e);
         }
         // 対象情報取得
         createIndex();
@@ -231,45 +276,5 @@ public class PerformanceService {
     public Boolean referenceAssertionResult(String uuid) {
         Boolean assertionResult = assertionResultMap.get(uuid);
         return assertionResult;
-    }
-
-    public CompletableFuture<Void> runBatchInsert(List<String> csvFile) {
-        return CompletableFuture.runAsync(() -> {
-            List<UserMaster> insertUserMasterList = new ArrayList<UserMaster>();
-            for (String csv : csvFile) {
-                //カンマで分割した内容を配列に格納する
-                String[] data = csv.split(",", -1);
-
-                //データ内容をコンソールに表示する
-                log.info("-------------------------------");
-                //データ件数を表示
-                log.info("データ読み込み" + i.incrementAndGet() + "件目");
-                //データ内容をコンソールに表示する
-                log.info("-------------------------------");
-                //データ件数を表示
-                //配列の中身を順位表示する。列数(=列名を格納した配列の要素数)分繰り返す
-                log.debug("ユーザー姓:" + data[1]);
-                log.debug("出身都道府県:" + data[2]);
-                log.debug("ユーザー名:" + data[0]);
-                log.debug("出身市区町村:" + data[3]);
-                log.debug("血液型:" + data[4]);
-                log.debug("趣味1:" + data[5]);
-                log.debug("趣味2:" + data[6]);
-                log.debug("趣味3:" + data[7]);
-                log.debug("趣味4:" + data[8]);
-                log.debug("趣味5:" + data[9]);
-
-                // 特定の件のみインサートするようにする
-                Matcher matcher = pattern.matcher(csv);
-                if(matcher.find()) {
-                    // 行数のインクリメント
-                    log.info("データ書き込み" + j.incrementAndGet() + "件目");
-                    insertUserMasterList.add(new UserMaster(
-                            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]
-                                    ));
-                }
-            }
-            userDao.insertUserInfoAndUserHobby(insertUserMasterList);
-        }, executor);
     }
 }
