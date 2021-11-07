@@ -2,7 +2,7 @@ spring:
   datasource:
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgres://ezziaauhlcivoi:1c53f6a5c1e964076f50127c49ffa72ab3c42eaa43e3486b5ba84ca546627302@ec2-34-203-91-150.compute-1.amazonaws.com:5432/dbabplbifru62j
+    url: jdbc:postgres://ezziaauhlcivoi:1c53f6a5c1e964076f50127c49ffa72ab3c42eaa43e3486b5ba84ca546627302@ec2-34-203-91-150.compute-1.amazonaws.com:5432/dbabplbifru62j?useServerPrepStmts=false&rewriteBatchedStatements=true
     username: ezziaauhlcivoi
     password: 1c53f6a5c1e964076f50127c49ffa72ab3c42eaa43e3486b5ba84ca546627302
 
